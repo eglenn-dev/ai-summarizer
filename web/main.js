@@ -6,25 +6,18 @@ let output = document.querySelector('.output');
 
 form.onsubmit = async (ev) => {
   ev.preventDefault();
+  // const frame = document.createElement('iframe');
+  // frame.src = promptInput.value;
+  // const previewSection = document.querySelector('.preview');
+  // previewSection.appendChild(frame);
   output.textContent = 'Generating...';
 
   try {
-    // Assemble the prompt by combining the text with the chosen image
-    let contents = [
-      {
-        role: 'user',
-        parts: [
-          { text: promptInput.value }
-        ]
-      }
-    ];
-
     // Call the gemini-pro-vision model, and get a stream of results
     let stream = streamGemini({
       model: 'gemini-pro',
-      contents,
+      url: promptInput.value,
     });
-
     // Read from the stream and interpret the output as markdown
     let buffer = [];
     let md = new markdownit();

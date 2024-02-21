@@ -1,15 +1,17 @@
 import json
 import os
-import site
+from website_parser import website_parser as wp
 
 import google.generativeai as genai
-from flask import Flask, jsonify, request, send_file, send_from_directory
 
 API_KEY = 'AIzaSyDwY5zfvC_zHeJ0eHNN9H7pIr-lo-BmSj4'
 
-website = Site('https://www.cnn.com/2024/02/20/politics/joe-biden-donald-trump-wild-comments/index.html')
+genai.configure(api_key=API_KEY)
 
-model = genai.GenerativeModel(model_name=req_body.get("model"))
-prompt = 'Summarize the following article into three bullet points: ' + website.get_text()
-summary = model.generate_content(prompt, stream=False)
-print(summary)
+website = wp('https://news-gh.churchofjesuschrist.org/article/apostles-join-the-africa-west-area-presidency-in-visit-to-lagos-and-abuja--nigeria')
+
+model = genai.GenerativeModel(model_name='gemini-pro')
+prompt = 'Summarize the following article into three key bullet points, ensuring no bias in the summarization: ' + website.get_text()
+result = model.generate_content(prompt, stream=False)
+website.set_summary(result.text)
+print(website.get_summary())

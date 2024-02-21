@@ -1,13 +1,13 @@
 export async function* streamGemini({
   model = 'gemini-pro',
-  contents = [],
+  url = ''
 } = {}) {
   // Send the prompt to the Python backend
   // Call API defined in main.py
   let response = await fetch("/api/generate", {
     method: "POST",
     headers: { "content-type": "application/json" },
-    body: JSON.stringify({ model, contents })
+    body: JSON.stringify({ model, url })
   });
 
   yield* streamResponseChunks(response);

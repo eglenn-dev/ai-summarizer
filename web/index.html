@@ -12,28 +12,15 @@
   <main>
     <h1>Gemini Website Summarizer</h1>
     <form>
-      <!-- <div class="image-picker">
-        <label class="image-choice">
-          <input type="radio" checked name="chosen-image" value="/baked_goods_1.jpg">
-          <img src="/baked_goods_1.jpg">
-        </label>
-        <label class="image-choice">
-          <input type="radio" name="chosen-image" value="/baked_goods_2.jpg">
-          <img src="/baked_goods_2.jpg">
-        </label>
-        <label class="image-choice">
-          <input type="radio" name="chosen-image" value="/baked_goods_3.jpg">
-          <img src="/baked_goods_3.jpg">
-        </label>
-      </div> -->
       <div class="prompt-box">
         <label>
-          <input name="prompt" placeholder="Enter instructions here" type="text"
-            value="What can you do?">
+          <input id="urlInput" name="prompt" placeholder="Enter URL" type="text"
+            value="https://news-gh.churchofjesuschrist.org/article/apostles-join-the-africa-west-area-presidency-in-visit-to-lagos-and-abuja--nigeria">
         </label>
         <button type="submit">Go</button>
       </div>
     </form>
+    <div class="preview"></div>
     <p class="output">(Results will appear here)</p>
   </main>
 
