@@ -1,11 +1,5 @@
-# Dev environment
-pip
-autopep8
-
-# App
-google-generativeai # Client library for the Gemini API
-Pillow # PIL image-loading library
-flask
 requests
 bs4
-json
+google-generativeai
+flask
+PyPDF2

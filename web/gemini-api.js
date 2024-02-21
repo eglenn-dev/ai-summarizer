@@ -40,11 +40,13 @@ async function* streamResponseChunks(response) {
         if (flush) break;
         continue;
       }
-      let { error, text } = JSON.parse(chunk);
+      let { error, text, faviconURL } = JSON.parse(chunk);
       if (error) {
         console.error(error);
         throw new Error(error?.message || JSON.stringify(error));
       }
+      const destImage = document.querySelector('#destFaviconImage');
+      destImage.src = faviconURL;
       yield text;
       if (flush) break;
     }

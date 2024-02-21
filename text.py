@@ -1,5 +1,3 @@
-import json
-import os
 from website_parser import website_parser as wp
 
 import google.generativeai as genai

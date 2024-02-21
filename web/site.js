@@ -6,10 +6,6 @@ let output = document.querySelector('.output');
 
 form.onsubmit = async (ev) => {
   ev.preventDefault();
-  // const frame = document.createElement('iframe');
-  // frame.src = promptInput.value;
-  // const previewSection = document.querySelector('.preview');
-  // previewSection.appendChild(frame);
   output.textContent = 'Generating...';
 
   try {
