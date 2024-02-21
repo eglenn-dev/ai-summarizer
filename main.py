@@ -1,12 +1,10 @@
 import json
 import os
+import site
 
 import google.generativeai as genai
 from flask import Flask, jsonify, request, send_file, send_from_directory
 
-# 🔥 FILL THIS OUT FIRST! 🔥
-# 🔥 GET YOUR GEMINI API KEY AT 🔥
-# 🔥 https://g.co/ai/idxGetGeminiKey 🔥
 API_KEY = 'AIzaSyDwY5zfvC_zHeJ0eHNN9H7pIr-lo-BmSj4'
 
 genai.configure(api_key=API_KEY)

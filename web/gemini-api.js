@@ -1,9 +1,5 @@
-/**
- * Calls the given Gemini model with the given image and/or text
- * parts, streaming output (as a generator function).
- */
 export async function* streamGemini({
-  model = 'gemini-pro-vision', // use 'gemini-pro' for text -> text
+  model = 'gemini-pro',
   contents = [],
 } = {}) {
   // Send the prompt to the Python backend
