@@ -3,29 +3,39 @@ import os
 import google.generativeai as genai
 from flask import Flask, jsonify, request, send_file, send_from_directory
 from website_parser import website_parser as wp
-from PyPDF2 import PdfFileReader as pfr
+from PyPDF2 import PdfReader  as pfr
 from dotenv import load_dotenv
+from werkzeug.utils import secure_filename
 
+# Importing the API key into the environment
 load_dotenv()
-API_KEY = os.environ.get("API_KEY")
+API_KEY = os.environ.get('API_KEY')
 
+# Checking if the API key is present
 if API_KEY is None:
-    print("API_KEY not found in environment variables. Please set it and try again.")
+    # If not, print an error message and exit
+    print('API_KEY not found in environment variables. Please set it and try again.')
     exit()
+
+# Configuring the API key and the gemini api object
 genai.configure(api_key=API_KEY)
+file_name = ''
 
-UPLOAD_FOLDER = './uploads'
+# Creating the Flask app and setting the upload folder and allowed file extensions
+app = Flask(__name__, static_url_path='/web', static_folder='web')
+current_dir = os.path.abspath(os.path.dirname(__file__))
+upload_folder = os.path.join(current_dir, 'static/uploads')
+app.config['UPLOAD_FOLDER'] = upload_folder
 ALLOWED_EXTENSIONS = {'pdf'}
-
-app = Flask(__name__)
+app.config['ALLOWED_EXTENSIONS'] = ALLOWED_EXTENSIONS
 
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
-
-@app.route("/")
+# Default root
+@app.route('/')
 def index():
-    return send_file('web/site.html')
+    return send_file('web/index.html')
 
 @app.route('/site')
 def site():
@@ -35,41 +45,67 @@ def site():
 def doc():
     return send_file('web/doc.html')
 
-@app.route("/api/generate", methods=["POST"])
+@app.route('/api/site', methods=['POST'])
 def generate_api():
-    if request.method == "POST":
+    if request.method == 'POST':
         if API_KEY == 'TODO':
-            return jsonify({ "error": '''
+            return jsonify({ 'error': '''
                 To get started, get an API key at
                 https://g.co/ai/idxGetGeminiKey and enter it in
                 main.py
                 '''.replace('\n', '') })
         try:
             req_body = request.get_json()
-            model = genai.GenerativeModel(model_name=req_body.get("model"))
-            website = wp(req_body.get("url"))
+            model = genai.GenerativeModel(model_name=req_body.get('model'))
+            website = wp(req_body.get('url'))
             response = model.generate_content(f'Summarize the following article into three key bullet points: {website.get_text()}', stream=True)
             def stream():
                 for chunk in response:
-                     yield 'data: %s\n\n' % json.dumps({ "text": chunk.text, "faviconURL": website.get_favicon()})
+                     yield 'data: %s\n\n' % json.dumps({ 'text': chunk.text, 'faviconURL': website.get_favicon()})
 
             return stream(), {'Content-Type': 'text/event-stream'}     
 
         except Exception as e:
-            return jsonify({ "error": str(e) })
+            return jsonify({ 'error': str(e) })
 
-@app.route('/upload', methods=['POST'])
+@app.route('/api/doc', methods=['POST'])
 def upload_file():
-    if 'file' not in request.files:
-        return 'No file part'
-    file = request.files['file']
-    if file.filename == '':
-        return 'No selected file'
-    if file and allowed_file(file.filename):
-        filename = secure_filename(file.filename)
-        file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
-        return 'File uploaded successfully'
+    if request.method == 'POST':
+        if 'file' not in request.files:
+            return 'No file part'
         
+        file = request.files['file']
+
+        if file.filename == '':
+            return 'No selected file', 400
+        
+        if file and allowed_file(file.filename):
+            # Preparing the file
+            filename = secure_filename(file.filename)
+            os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
+            file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+            global file_name
+            file_name = filename
+
+            # Sending the file to gemini api for summarization
+            try:
+                # req_body = request.get_json()
+                model = genai.GenerativeModel(model_name='gemini-pro')
+                with open(os.path.join(app.config['UPLOAD_FOLDER'], file_name), 'rb') as f:
+                    pdf = pfr(f)
+                    text = ''
+                    for i in range(len(pdf.pages)):
+                        text += pdf.pages[i].extract_text()
+                    response = model.generate_content(f'Summarize the following document into key bullet points as plain text: {text}', stream=True)
+                    def stream():
+                        for chunk in response:
+                            yield 'data: %s\n\n' % json.dumps({ 'text': chunk.text, 'faviconURL': 'https://www.google.com/images/branding/googlelogo/1x/googlelogo_color_272x92dp.png'})
+
+                    return stream(), {'Content-Type': 'text/event-stream'}    
+
+            except Exception as e:
+                return jsonify({ 'error': str(e) })
+
 
 
 @app.route('/<path:path>')
@@ -77,6 +113,6 @@ def serve_static(path):
     return send_from_directory('web', path)
 
 
-if __name__ == "__main__":
-    # app.run(port=5510, debug=True) # For debugging
-    app.run(port=5000, host='0.0.0.0')
+if __name__ == '__main__':
+    app.run(port=5510, debug=True) # For debugging
+    # app.run(port=5000, host='0.0.0.0') # For deployment

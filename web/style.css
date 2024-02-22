@@ -116,6 +116,7 @@ label {
 }
 
 input,
+a,
 button {
   border: 1px solid #ddd;
   border-radius: 8px;
@@ -124,6 +125,7 @@ button {
   font-size: 16px;
 }
 
+a,
 button {
   border-color: var(--accent-color);
   background-color: var(--accent-color);
@@ -133,11 +135,22 @@ button {
   opacity: 1;
 }
 
+a:focus-visible,
 button:focus-visible {
   outline: 2px solid white;
   outline-offset: -4px;
 }
 
+a:hover,
 button:hover {
   opacity: 0.95;
+}
+
+a {
+  text-decoration: none;
+}
+
+.button-grid {
+  display: flex;
+  gap: 8px;
 }
