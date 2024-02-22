@@ -78,4 +78,5 @@ def serve_static(path):
 
 
 if __name__ == "__main__":
-    app.run(port=5510, debug=True)
+    # app.run(port=5510, debug=True) # For debugging
+    app.run(port=5000, host='0.0.0.0')
