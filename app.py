@@ -1,10 +1,17 @@
 import json
+import os
 import google.generativeai as genai
 from flask import Flask, jsonify, request, send_file, send_from_directory
 from website_parser import website_parser as wp
 from PyPDF2 import PdfFileReader as pfr
+from dotenv import load_dotenv
 
-API_KEY = 'AIzaSyDwY5zfvC_zHeJ0eHNN9H7pIr-lo-BmSj4'
+load_dotenv()
+API_KEY = os.environ.get("API_KEY")
+
+if API_KEY is None:
+    print("API_KEY not found in environment variables. Please set it and try again.")
+    exit()
 genai.configure(api_key=API_KEY)
 
 UPLOAD_FOLDER = './uploads'
@@ -16,10 +23,9 @@ def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
 
-
 @app.route("/")
 def index():
-    return send_file('web/index.html')
+    return send_file('web/site.html')
 
 @app.route('/site')
 def site():

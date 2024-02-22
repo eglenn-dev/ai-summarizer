@@ -2,4 +2,5 @@ requests
 bs4
 google-generativeai
 flask
-PyPDF2
+pypdf2
+python-dotenv
