@@ -4,3 +4,6 @@ google-generativeai
 flask
 pypdf2
 python-dotenv
+Werkzeug
+pytest
+gunicorn
