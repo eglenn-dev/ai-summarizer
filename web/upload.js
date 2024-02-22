@@ -19,7 +19,9 @@ form.onsubmit = async (ev) => {
     })
         .then(response => response.text())
         .then(text => {
-            document.querySelector('.output').textContent = text;
+            let md = new markdownit();
+            let innterText = md.render(text);
+            document.querySelector('.output').innerHTML = innterText;
         })
         .catch(error => {
             document.querySelector('.output').textContent = error.message;

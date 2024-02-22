@@ -96,12 +96,13 @@ def upload_file():
                     text = ''
                     for i in range(len(pdf.pages)):
                         text += pdf.pages[i].extract_text()
-                    response = model.generate_content(f'Summarize the following document into key bullet points as plain text: {text}', stream=True)
-                    def stream():
-                        for chunk in response:
-                            yield 'data: %s\n\n' % json.dumps({ 'text': chunk.text, 'faviconURL': 'https://www.google.com/images/branding/googlelogo/1x/googlelogo_color_272x92dp.png'})
+                    response = model.generate_content(f'Summarize the following document into key bullet points as plain text: {text}', stream=False)
+                    return response.text
+                    # def stream():
+                    #     for chunk in response:
+                    #         yield 'data: %s\n\n' % json.dumps({ 'text': chunk.text, 'faviconURL': 'https://www.google.com/images/branding/googlelogo/1x/googlelogo_color_272x92dp.png'})
 
-                    return stream(), {'Content-Type': 'text/event-stream'}    
+                    # return stream(), {'Content-Type': 'text/event-stream'}    
 
             except Exception as e:
                 return jsonify({ 'error': str(e) })
