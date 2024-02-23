@@ -7,7 +7,6 @@ let output = document.querySelector('.output');
 form.onsubmit = async (ev) => {
   ev.preventDefault();
   output.textContent = 'Generating...';
-
   try {
     // Call the gemini-pro-vision model, and get a stream of results
     let stream = streamGemini({

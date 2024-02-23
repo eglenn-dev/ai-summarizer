@@ -9,7 +9,6 @@ export async function* streamGemini({
   if (formData != '') {
     let response = await fetch(streamURL, {
       method: "POST",
-      // headers: { "content-type": "multipart/form-data" },
       body: formData
     });
     yield* streamResponseChunks(response);
@@ -55,8 +54,10 @@ async function* streamResponseChunks(response) {
         console.error(error);
         throw new Error(error?.message || JSON.stringify(error));
       }
-      const destImage = document.querySelector('#destFaviconImage');
-      destImage.src = faviconURL;
+      if (faviconURL) {
+        const sourceImage = document.querySelector('#destFaviconImage');
+        sourceImage.src = faviconURL;
+      }
       yield text;
       if (flush) break;
     }

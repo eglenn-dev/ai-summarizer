@@ -6,6 +6,7 @@ from website_parser import website_parser as wp
 from PyPDF2 import PdfReader  as pfr
 from dotenv import load_dotenv
 from werkzeug.utils import secure_filename
+import math
 
 # Importing the API key into the environment
 load_dotenv()
@@ -35,30 +36,24 @@ def allowed_file(filename):
 # Default root
 @app.route('/')
 def index():
-    return send_file('web/index.html')
+    return send_file('web/pages/index.html')
 
 @app.route('/site')
 def site():
-    return send_file('web/site.html')
+    return send_file('web/pages/site.html')
 
 @app.route('/doc')
 def doc():
-    return send_file('web/doc.html')
+    return send_file('web/pages/doc.html')
 
 @app.route('/api/site', methods=['POST'])
 def generate_api():
     if request.method == 'POST':
-        if API_KEY == 'TODO':
-            return jsonify({ 'error': '''
-                To get started, get an API key at
-                https://g.co/ai/idxGetGeminiKey and enter it in
-                main.py
-                '''.replace('\n', '') })
         try:
             req_body = request.get_json()
             model = genai.GenerativeModel(model_name=req_body.get('model'))
             website = wp(req_body.get('url'))
-            response = model.generate_content(f'Summarize the following article into three key bullet points: {website.get_text()}', stream=True)
+            response = model.generate_content(f'Summarize the following article into four key bullet points: {website.get_text()}', stream=True)
             def stream():
                 for chunk in response:
                      yield 'data: %s\n\n' % json.dumps({ 'text': chunk.text, 'faviconURL': website.get_favicon()})
@@ -87,22 +82,21 @@ def upload_file():
             global file_name
             file_name = filename
 
-            # Sending the file to gemini api for summarization
             try:
-                # req_body = request.get_json()
                 model = genai.GenerativeModel(model_name='gemini-pro')
                 with open(os.path.join(app.config['UPLOAD_FOLDER'], file_name), 'rb') as f:
                     pdf = pfr(f)
                     text = ''
                     for i in range(len(pdf.pages)):
                         text += pdf.pages[i].extract_text()
-                    response = model.generate_content(f'Summarize the following document into key bullet points as plain text: {text}', stream=False)
-                    return response.text
-                    # def stream():
-                    #     for chunk in response:
-                    #         yield 'data: %s\n\n' % json.dumps({ 'text': chunk.text, 'faviconURL': 'https://www.google.com/images/branding/googlelogo/1x/googlelogo_color_272x92dp.png'})
+                    text.replace('\n', ' ')
+                    bullet_points = calculate_bullet_points(count_pages(pdf), 300)
+                    response = model.generate_content(f'Summarize the following document into {bullet_points} key bullet that are categorized into sections, also preforms a sentiment analysis at the bottom, and generate three questions to gauge the readers understanding of the document: {text}', stream=True)
+                    def stream():
+                        for chunk in response:
+                            yield 'data: %s\n\n' % json.dumps({ 'text': chunk.text})
 
-                    # return stream(), {'Content-Type': 'text/event-stream'}    
+                    return stream(), {'Content-Type': 'text/event-stream'}    
 
             except Exception as e:
                 return jsonify({ 'error': str(e) })
@@ -113,6 +107,18 @@ def upload_file():
 def serve_static(path):
     return send_from_directory('web', path)
 
+def calculate_bullet_points(document_length, max_summary_length, k=0.001, m=2500):
+    return math.ceil((max_summary_length / (1 + math.exp(-k * (document_length - m)))) / 20)
+
+def count_pages(document):
+    word_count = 0
+    num_pages = len(document.pages)
+    for page_num in range(num_pages):
+            page = document.pages[page_num]
+            text = page.extract_text()
+            words = text.split()
+            word_count += len(words)
+    return word_count
 
 if __name__ == '__main__':
     app.run(port=5510, debug=True) # For debugging
