@@ -1,7 +1,7 @@
 import json
 import os
 import google.generativeai as genai
-from flask import Flask, jsonify, request, send_file, send_from_directory
+from flask import Flask, jsonify, request, send_file, send_from_directory, redirect
 from website_parser import website_parser as wp
 from PyPDF2 import PdfReader  as pfr
 from dotenv import load_dotenv
@@ -46,7 +46,7 @@ def site():
 def doc():
     return send_file('web/pages/doc.html')
 
-@app.route('/api/site', methods=['POST'])
+@app.route('/api/site', methods=['GET', 'POST'])
 def generate_api():
     if request.method == 'POST':
         try:
@@ -62,8 +62,10 @@ def generate_api():
 
         except Exception as e:
             return jsonify({ 'error': str(e) })
+    elif request.method == 'GET':
+        return redirect('/')
 
-@app.route('/api/doc', methods=['POST'])
+@app.route('/api/doc', methods=['GET', 'POST'])
 def upload_file():
     if request.method == 'POST':
         if 'file' not in request.files:
@@ -100,7 +102,8 @@ def upload_file():
 
             except Exception as e:
                 return jsonify({ 'error': str(e) })
-
+    elif request.method == 'GET':
+        return redirect('/')
 
 
 @app.route('/<path:path>')
