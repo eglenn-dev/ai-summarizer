@@ -31,14 +31,14 @@ h1 {
   font-size: 24px;
 }
 
-h1::before {
+/* h1::before {
   content: '';
   display: inline-block;
   background: url(../images/gemini.png);
   width: 40px;
   height: 40px;
   background-size: cover;
-}
+} */
 
 form {
   margin: 0;
