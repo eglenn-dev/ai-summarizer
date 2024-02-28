@@ -21,10 +21,10 @@ form.onsubmit = async (ev) => {
         let buffer = [];
         let md = new markdownit();
         for await (let chunk of stream) {
-            loading.style.display = 'none';
             buffer.push(chunk);
             output.innerHTML = md.render(buffer.join(''));
         }
+        loading.style.display = 'none';
     } catch (e) {
         output.innerHTML += '<hr>' + e;
     }
