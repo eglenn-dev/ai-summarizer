@@ -7,3 +7,5 @@ python-dotenv
 Werkzeug
 pytest
 gunicorn
+reportlab
+markdown
