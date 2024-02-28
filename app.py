@@ -62,6 +62,8 @@ def generate_api():
         try:
             req_body = request.get_json()
             model = genai.GenerativeModel(model_name=req_body.get('model'))
+            if 'https://' not in req_body.get('url'):
+                return jsonify({ 'error': 'Please enter a valid URL with https:// header.' })
             website = wp(req_body.get('url'))
             response = model.generate_content(f'Summarize the following article into four key bullet points: {website.get_text()}', stream=True)
             def stream():
@@ -172,5 +174,5 @@ def count_pages(document):
     return word_count
 
 if __name__ == '__main__':
-    app.run(port=5510, debug=True) # For debugging
-    # app.run(port=5000, host='0.0.0.0') # For deployment
+    # app.run(port=5510, debug=True) # For debugging
+    app.run(port=5000, host='0.0.0.0') # For deployment
