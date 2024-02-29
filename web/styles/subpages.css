@@ -156,6 +156,20 @@ a {
   border-radius: 5px;
 }
 
+.back-arrow {
+  display: flex;
+  align-items: left;
+  gap: 8px;
+  margin-bottom: 24px;
+  font-size: 20px;
+  cursor: pointer;
+}
+
+.back-arrow a {
+  color: #FFFFFF;
+  text-decoration: none;
+  font-size: 1em;
+}
 
 /* Loading Styles */
 .loading {
