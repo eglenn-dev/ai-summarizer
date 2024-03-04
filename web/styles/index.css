@@ -84,6 +84,17 @@ button {
     margin: 30px;
     justify-self: center;
     align-self: end;
+}
+
+.page-buttons {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 1em;
+}
+
+.middle-column {
     grid-column: 2/3;
 }
 

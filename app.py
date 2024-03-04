@@ -43,7 +43,6 @@ app.config['ALLOWED_EXTENSIONS'] = ALLOWED_EXTENSIONS
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
-# Default root
 @app.route('/')
 def index():
     return send_file('web/pages/index.html')
@@ -67,8 +66,11 @@ def generate_api():
             website = wp(req_body.get('url'))
             response = model.generate_content(f'Summarize the following article into four key bullet points: {website.get_text()}', stream=True)
             def stream():
-                for chunk in response:
-                     yield 'data: %s\n\n' % json.dumps({ 'text': chunk.text, 'faviconURL': website.get_favicon()})
+                try:
+                    for chunk in response:
+                        yield 'data: %s\n\n' % json.dumps({ 'text': chunk.text, 'faviconURL': website.get_favicon()})
+                except:
+                    yield 'data: %s\n\n' % json.dumps({ 'error': 'An error occurred while generating content. This is likely due to the website blocking our software, or there is sensitive content on the website that violates the AI safety features.' })
 
             return stream(), {'Content-Type': 'text/event-stream'}     
 

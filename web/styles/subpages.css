@@ -101,7 +101,6 @@ form {
   width: 100%;
   display: flex;
   gap: 8px;
-  align-items: flex-end;
 }
 
 label {
@@ -169,6 +168,14 @@ a {
   color: #FFFFFF;
   text-decoration: none;
   font-size: 1em;
+  padding: 0.5em;
+}
+
+.back-arrow a svg {
+  font-weight: 700;
+  margin-bottom: -3px;
+  width: 1.15em;
+  height: 1.15em;
 }
 
 @media only screen and (max-width: 500px) {
