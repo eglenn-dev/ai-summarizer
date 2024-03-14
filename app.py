@@ -55,6 +55,10 @@ def site():
 def doc():
     return send_file('web/pages/doc.html')
 
+@app.route('/api', methods=['GET', 'POST'])
+def api():
+    return redirect('/')
+
 @app.route('/api/site', methods=['POST'])
 def generate_api():
     if request.method == 'POST':
@@ -178,5 +182,5 @@ def count_pages(document):
     return word_count
 
 if __name__ == '__main__':
-    app.run(port=5510, debug=True) # For debugging
-    # app.run(port=5000, host='0.0.0.0') # For deployment
+    # app.run(port=5510, debug=True) # For debugging
+    app.run(port=5000, host='0.0.0.0') # For deployment
