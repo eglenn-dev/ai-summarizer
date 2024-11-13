@@ -3,8 +3,6 @@ import math
 def calculate_summary_length(document_length, max_summary_length, k, m):
     return max_summary_length / (1 + math.exp(-k * (document_length - m)))
 
-
-
 # Example usage
 document_length = 500  # Length of the document in words
 max_summary_length = 300  # Maximum desired summary length in words
