@@ -101,7 +101,7 @@ def upload_file():
             file_name = filename
 
             try:
-                model = genai.GenerativeModel(model_name='gemini-pro')
+                model = genai.GenerativeModel(model_name='gemini-1.5-flash')
                 with open(os.path.join(app.config['UPLOAD_FOLDER'], file_name), 'rb') as f:
                     pdf = pfr(f)
                     if len(pdf.pages) > 22:
@@ -182,5 +182,5 @@ def count_pages(document):
     return word_count
 
 if __name__ == '__main__':
-    # app.run(port=5510, debug=True) # For debugging
-    app.run(port=5000, host='0.0.0.0') # For deployment
+    app.run(port=5510, debug=True) # For debugging
+    # app.run(port=5000, host='0.0.0.0') # For deployment
