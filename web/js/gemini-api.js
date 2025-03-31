@@ -1,5 +1,5 @@
 export async function* streamGemini({
-  model = 'gemini-pro',
+  model = 'gemini-2.0-flash',
   streamURL = '',
   url = '',
   formData = ''

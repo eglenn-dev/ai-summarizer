@@ -14,7 +14,7 @@ form.onsubmit = async (ev) => {
     formData.append('file', file);
     try {
         let stream = streamGemini({
-            model: 'gemini-pro',
+            model: 'gemini-2.0-flash',
             streamURL: "/api/doc",
             formData: formData
         });

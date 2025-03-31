@@ -10,7 +10,7 @@ form.onsubmit = async (ev) => {
   try {
     // Call the gemini-pro-vision model, and get a stream of results
     let stream = streamGemini({
-      model: 'gemini-pro',
+      model: 'gemini-2.0-flash',
       streamURL: "/api/site",
       url: promptInput.value,
     });
